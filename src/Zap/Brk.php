@@ -91,7 +91,7 @@ class Brk {
 	/**
 	 * Submits the currently intercepted message and unsets the global request/response break points
 	 */
-	public function continue($apikey='') {
+	public function doContinue($apikey='') {
 		$res = $this->zap->request($this->zap->base . 'break/action/continue/', array('apikey' => $apikey));
 		return reset($res);
 	}
