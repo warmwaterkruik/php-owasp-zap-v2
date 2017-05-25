@@ -33,7 +33,7 @@ class Core {
 	}
 
 	/**
-	 * Gets the alert with the given ID, the corresponding HTTP message can be obtained with the 'messageId' field and 'message' API method
+	 * Verkrijgt een waarschuwing met het gegeven ID. Het bijbehorende HTTP bericht kan worden verkregen met het ''messageId'' veld en ''message'' API methode
 	 */
 	public function alert($id) {
 		$res = $this->zap->request($this->zap->base . 'core/view/alert/', array('id' => $id));
@@ -41,9 +41,9 @@ class Core {
 	}
 
 	/**
-	 * Gets the alerts raised by ZAP, optionally filtering by URL and paginating with 'start' position and 'count' of alerts
+	 * Verkrijgt de waarschuwingen gegeven door ZAP, desgewenst gefilterd op URL en gepagineerd met ''start'' positie en ''count'' aantal waarschuwingen
 	 */
-	public function alerts($baseurl=NULL, $start=NULL, $count=NULL) {
+	public function alerts($baseurl=NULL, $start=NULL, $count=NULL, $riskid=NULL) {
 		$params = array();
 		if ($baseurl !== NULL) {
 			$params['baseurl'] = $baseurl;
@@ -54,24 +54,42 @@ class Core {
 		if ($count !== NULL) {
 			$params['count'] = $count;
 		}
+		if ($riskid !== NULL) {
+			$params['riskId'] = $riskid;
+		}
 		$res = $this->zap->request($this->zap->base . 'core/view/alerts/', $params);
 		return reset($res);
 	}
 
 	/**
-	 * Gets the number of alerts, optionally filtering by URL
+	 * Gets number of alerts grouped by each risk level, optionally filtering by URL
 	 */
-	public function numberOfAlerts($baseurl=NULL) {
+	public function alertsSummary($baseurl=NULL) {
 		$params = array();
 		if ($baseurl !== NULL) {
 			$params['baseurl'] = $baseurl;
+		}
+		$res = $this->zap->request($this->zap->base . 'core/view/alertsSummary/', $params);
+		return reset($res);
+	}
+
+	/**
+	 * Verkrijgt het aantal waarschuwingen, desgewenst gefilterd op URL
+	 */
+	public function numberOfAlerts($baseurl=NULL, $riskid=NULL) {
+		$params = array();
+		if ($baseurl !== NULL) {
+			$params['baseurl'] = $baseurl;
+		}
+		if ($riskid !== NULL) {
+			$params['riskId'] = $riskid;
 		}
 		$res = $this->zap->request($this->zap->base . 'core/view/numberOfAlerts/', $params);
 		return reset($res);
 	}
 
 	/**
-	 * Gets the name of the hosts accessed through/by ZAP
+	 * Verkrijgt de naam van de hosts die zijn benaderd door ZAP
 	 */
 	public function hosts() {
 		$res = $this->zap->request($this->zap->base . 'core/view/hosts/');
@@ -79,7 +97,7 @@ class Core {
 	}
 
 	/**
-	 * Gets the sites accessed through/by ZAP (scheme and domain)
+	 * Verkrijgt de sites die zijn benaderd via/door ZAP (schema en domein)
 	 */
 	public function sites() {
 		$res = $this->zap->request($this->zap->base . 'core/view/sites/');
@@ -87,15 +105,19 @@ class Core {
 	}
 
 	/**
-	 * Gets the URLs accessed through/by ZAP
+	 * Verkrijgt de URL''s die zijn benaderd via/door ZAP
 	 */
-	public function urls() {
-		$res = $this->zap->request($this->zap->base . 'core/view/urls/');
+	public function urls($baseurl=NULL) {
+		$params = array();
+		if ($baseurl !== NULL) {
+			$params['baseurl'] = $baseurl;
+		}
+		$res = $this->zap->request($this->zap->base . 'core/view/urls/', $params);
 		return reset($res);
 	}
 
 	/**
-	 * Gets the HTTP message with the given ID. Returns the ID, request/response headers and bodies, cookies and note.
+	 * Krijgt de HTTP berichten met de gegeven ID. Geeft het ID, request/response header en bodies, cookies, en notities terug.
 	 */
 	public function message($id) {
 		$res = $this->zap->request($this->zap->base . 'core/view/message/', array('id' => $id));
@@ -103,7 +125,7 @@ class Core {
 	}
 
 	/**
-	 * Gets the HTTP messages sent by ZAP, request and response, optionally filtered by URL and paginated with 'start' position and 'count' of messages
+	 * Verkrijgt de HTTP berichten verzonden door ZAP, request en response in HAR formaat, desgewenst gefilterd op URL en gepagineerd met ''start'' positie en ''count'' aantal berichten
 	 */
 	public function messages($baseurl=NULL, $start=NULL, $count=NULL) {
 		$params = array();
@@ -121,7 +143,15 @@ class Core {
 	}
 
 	/**
-	 * Gets the number of messages, optionally filtering by URL
+	 * Gets the HTTP messages with the given IDs.
+	 */
+	public function messagesById($ids) {
+		$res = $this->zap->request($this->zap->base . 'core/view/messagesById/', array('ids' => $ids));
+		return reset($res);
+	}
+
+	/**
+	 * Verkrijgt het aantal berichten, desgewenst gefilterd op URL
 	 */
 	public function numberOfMessages($baseurl=NULL) {
 		$params = array();
@@ -133,15 +163,23 @@ class Core {
 	}
 
 	/**
-	 * Gets ZAP version
+	 * Gets the mode
 	 */
-	public function version() {
-		$res = $this->zap->request($this->zap->base . 'core/view/version/');
+	public function mode() {
+		$res = $this->zap->request($this->zap->base . 'core/view/mode/');
 		return reset($res);
 	}
 
 	/**
-	 * Gets the regular expressions, applied to URLs, to exclude from the Proxy
+	 * Verkrijgt het versienummer van ZAP
+	 */
+  public function version($api_key = '') {
+    $res = $this->zap->request($this->zap->base . 'core/view/version/', array('apikey' => $api_key));
+    return reset($res);
+  }
+
+	/**
+	 * Verkrijgt de reguliere expressies die worden toegepast op URL''s om uit te sluiten van de Proxy
 	 */
 	public function excludedFromProxy() {
 		$res = $this->zap->request($this->zap->base . 'core/view/excludedFromProxy/');
@@ -153,17 +191,91 @@ class Core {
 		return reset($res);
 	}
 
-	public function stats($keyprefix=NULL) {
-		$params = array();
-		if ($keyprefix !== NULL) {
-			$params['keyPrefix'] = $keyprefix;
-		}
-		$res = $this->zap->request($this->zap->base . 'core/view/stats/', $params);
+	/**
+	 * Gets the location of the current session file
+	 */
+	public function sessionLocation() {
+		$res = $this->zap->request($this->zap->base . 'core/view/sessionLocation/');
 		return reset($res);
 	}
 
+	/**
+	 * Gets all the domains that are excluded from the outgoing proxy. For each domain the following are shown: the index, the value (domain), if enabled, and if specified as a regex.
+	 */
+	public function proxyChainExcludedDomains() {
+		$res = $this->zap->request($this->zap->base . 'core/view/proxyChainExcludedDomains/');
+		return reset($res);
+	}
+
+	/**
+	 * Use view proxyChainExcludedDomains instead.
+	 */
+	public function optionProxyChainSkipName() {
+		$res = $this->zap->request($this->zap->base . 'core/view/optionProxyChainSkipName/');
+		return reset($res);
+	}
+
+	/**
+	 * Use view proxyChainExcludedDomains instead.
+	 */
+	public function optionProxyExcludedDomains() {
+		$res = $this->zap->request($this->zap->base . 'core/view/optionProxyExcludedDomains/');
+		return reset($res);
+	}
+
+	/**
+	 * Use view proxyChainExcludedDomains instead.
+	 */
+	public function optionProxyExcludedDomainsEnabled() {
+		$res = $this->zap->request($this->zap->base . 'core/view/optionProxyExcludedDomainsEnabled/');
+		return reset($res);
+	}
+
+	/**
+	 * Gets the path to ZAP's home directory.
+	 */
+	public function zapHomePath() {
+		$res = $this->zap->request($this->zap->base . 'core/view/zapHomePath/');
+		return reset($res);
+	}
+
+	/**
+	 * Gets the maximum number of alert instances to include in a report.
+	 */
+	public function optionMaximumAlertInstances() {
+		$res = $this->zap->request($this->zap->base . 'core/view/optionMaximumAlertInstances/');
+		return reset($res);
+	}
+
+	/**
+	 * Gets whether or not related alerts will be merged in any reports generated.
+	 */
+	public function optionMergeRelatedAlerts() {
+		$res = $this->zap->request($this->zap->base . 'core/view/optionMergeRelatedAlerts/');
+		return reset($res);
+	}
+
+	/**
+	 * Gets the path to the file with alert overrides.
+	 */
+	public function optionAlertOverridesFilePath() {
+		$res = $this->zap->request($this->zap->base . 'core/view/optionAlertOverridesFilePath/');
+		return reset($res);
+	}
+
+	/**
+	 * Gets the user agent that ZAP should use when creating HTTP messages (for example, spider messages or CONNECT requests to outgoing proxy).
+	 */
 	public function optionDefaultUserAgent() {
 		$res = $this->zap->request($this->zap->base . 'core/view/optionDefaultUserAgent/');
+		return reset($res);
+	}
+
+	/**
+	 * Gets the TTL (in seconds) of successful DNS queries.
+	 */
+	public function optionDnsTtlSuccessfulQueries() {
+		$res = $this->zap->request($this->zap->base . 'core/view/optionDnsTtlSuccessfulQueries/');
 		return reset($res);
 	}
 
@@ -192,23 +304,8 @@ class Core {
 		return reset($res);
 	}
 
-	public function optionProxyChainSkipName() {
-		$res = $this->zap->request($this->zap->base . 'core/view/optionProxyChainSkipName/');
-		return reset($res);
-	}
-
 	public function optionProxyChainUserName() {
 		$res = $this->zap->request($this->zap->base . 'core/view/optionProxyChainUserName/');
-		return reset($res);
-	}
-
-	public function optionProxyExcludedDomains() {
-		$res = $this->zap->request($this->zap->base . 'core/view/optionProxyExcludedDomains/');
-		return reset($res);
-	}
-
-	public function optionProxyExcludedDomainsEnabled() {
-		$res = $this->zap->request($this->zap->base . 'core/view/optionProxyExcludedDomainsEnabled/');
 		return reset($res);
 	}
 
@@ -243,7 +340,19 @@ class Core {
 	}
 
 	/**
-	 * Shuts down ZAP
+	 * Convenient and simple action to access a URL, optionally following redirections. Returns the request sent and response received and followed redirections, if any. Other actions are available which offer more control on what is sent, like, ''sendRequest'' or ''sendHarRequest''.
+	 */
+	public function accessUrl($url, $followredirects=NULL, $apikey='') {
+		$params = array('url' => $url, 'apikey' => $apikey);
+		if ($followredirects !== NULL) {
+			$params['followRedirects'] = $followredirects;
+		}
+		$res = $this->zap->request($this->zap->base . 'core/action/accessUrl/', $params);
+		return reset($res);
+	}
+
+	/**
+	 * Sluit ZAP af
 	 */
 	public function shutdown($apikey='') {
 		$res = $this->zap->request($this->zap->base . 'core/action/shutdown/', array('apikey' => $apikey));
@@ -251,7 +360,7 @@ class Core {
 	}
 
 	/**
-	 * Creates a new session, optionally overwriting existing files. If a relative path is specified it will be resolved against the "session" directory in ZAP "home" dir.
+	 * Maakt een nieuwe sessie aan, overschrijft desgewenst bestaande bestanden
 	 */
 	public function newSession($name=NULL, $overwrite=NULL, $apikey='') {
 		$params = array('apikey' => $apikey);
@@ -266,7 +375,7 @@ class Core {
 	}
 
 	/**
-	 * Loads the session with the given name. If a relative path is specified it will be resolved against the "session" directory in ZAP "home" dir.
+	 * Laad een sessie met de gegeven naam
 	 */
 	public function loadSession($name, $apikey='') {
 		$res = $this->zap->request($this->zap->base . 'core/action/loadSession/', array('name' => $name, 'apikey' => $apikey));
@@ -274,7 +383,7 @@ class Core {
 	}
 
 	/**
-	 * Saves the session with the name supplied, optionally overwriting existing files. If a relative path is specified it will be resolved against the "session" directory in ZAP "home" dir.
+	 * Slaat de sessie op met de gegeven naam, overschijft desgewenst bestaande bestanden
 	 */
 	public function saveSession($name, $overwrite=NULL, $apikey='') {
 		$params = array('name' => $name, 'apikey' => $apikey);
@@ -290,11 +399,17 @@ class Core {
 		return reset($res);
 	}
 
+	/**
+	 * Clears the regexes of URLs excluded from the proxy.
+	 */
 	public function clearExcludedFromProxy($apikey='') {
 		$res = $this->zap->request($this->zap->base . 'core/action/clearExcludedFromProxy/', array('apikey' => $apikey));
 		return reset($res);
 	}
 
+	/**
+	 * Adds a regex of URLs that should be excluded from the proxy.
+	 */
 	public function excludeFromProxy($regex, $apikey='') {
 		$res = $this->zap->request($this->zap->base . 'core/action/excludeFromProxy/', array('regex' => $regex, 'apikey' => $apikey));
 		return reset($res);
@@ -305,13 +420,24 @@ class Core {
 		return reset($res);
 	}
 
+	/**
+	 * Sets the mode, which may be one of [safe, protect, standard, attack]
+	 */
+	public function setMode($mode, $apikey='') {
+		$res = $this->zap->request($this->zap->base . 'core/action/setMode/', array('mode' => $mode, 'apikey' => $apikey));
+		return reset($res);
+	}
+
+	/**
+	 * Generates a new Root CA certificate for the Local Proxy.
+	 */
 	public function generateRootCA($apikey='') {
 		$res = $this->zap->request($this->zap->base . 'core/action/generateRootCA/', array('apikey' => $apikey));
 		return reset($res);
 	}
 
 	/**
-	 * Sends the HTTP request, optionally following redirections. Returns the request sent and response received and followed redirections, if any.
+	 * Verstuurt de HTTP request en volgt desgewenst redirects. Geeft de verstuurde request, ontvangen response, en gevolgde redirects terug, als die er zijn.
 	 */
 	public function sendRequest($request, $followredirects=NULL, $apikey='') {
 		$params = array('request' => $request, 'apikey' => $apikey);
@@ -322,6 +448,9 @@ class Core {
 		return reset($res);
 	}
 
+	/**
+	 * Deletes all alerts of the current session.
+	 */
 	public function deleteAllAlerts($apikey='') {
 		$res = $this->zap->request($this->zap->base . 'core/action/deleteAllAlerts/', array('apikey' => $apikey));
 		return reset($res);
@@ -332,11 +461,109 @@ class Core {
 		return reset($res);
 	}
 
-	public function clearStats($keyprefix, $apikey='') {
-		$res = $this->zap->request($this->zap->base . 'core/action/clearStats/', array('keyPrefix' => $keyprefix, 'apikey' => $apikey));
+	/**
+	 * Deletes the site node found in the Sites Tree on the basis of the URL, HTTP method, and post data (if applicable and specified). 
+	 */
+	public function deleteSiteNode($url, $method=NULL, $postdata=NULL, $apikey='') {
+		$params = array('url' => $url, 'apikey' => $apikey);
+		if ($method !== NULL) {
+			$params['method'] = $method;
+		}
+		if ($postdata !== NULL) {
+			$params['postData'] = $postdata;
+		}
+		$res = $this->zap->request($this->zap->base . 'core/action/deleteSiteNode/', $params);
 		return reset($res);
 	}
 
+	/**
+	 * Adds a domain to be excluded from the outgoing proxy, using the specified value. Optionally sets if the new entry is enabled (default, true) and whether or not the new value is specified as a regex (default, false).
+	 */
+	public function addProxyChainExcludedDomain($value, $isregex=NULL, $isenabled=NULL, $apikey='') {
+		$params = array('value' => $value, 'apikey' => $apikey);
+		if ($isregex !== NULL) {
+			$params['isRegex'] = $isregex;
+		}
+		if ($isenabled !== NULL) {
+			$params['isEnabled'] = $isenabled;
+		}
+		$res = $this->zap->request($this->zap->base . 'core/action/addProxyChainExcludedDomain/', $params);
+		return reset($res);
+	}
+
+	/**
+	 * Modifies a domain excluded from the outgoing proxy. Allows to modify the value, if enabled or if a regex. The domain is selected with its index, which can be obtained with the view proxyChainExcludedDomains.
+	 */
+	public function modifyProxyChainExcludedDomain($idx, $value=NULL, $isregex=NULL, $isenabled=NULL, $apikey='') {
+		$params = array('idx' => $idx, 'apikey' => $apikey);
+		if ($value !== NULL) {
+			$params['value'] = $value;
+		}
+		if ($isregex !== NULL) {
+			$params['isRegex'] = $isregex;
+		}
+		if ($isenabled !== NULL) {
+			$params['isEnabled'] = $isenabled;
+		}
+		$res = $this->zap->request($this->zap->base . 'core/action/modifyProxyChainExcludedDomain/', $params);
+		return reset($res);
+	}
+
+	/**
+	 * Removes a domain excluded from the outgoing proxy, with the given index. The index can be obtained with the view proxyChainExcludedDomains.
+	 */
+	public function removeProxyChainExcludedDomain($idx, $apikey='') {
+		$res = $this->zap->request($this->zap->base . 'core/action/removeProxyChainExcludedDomain/', array('idx' => $idx, 'apikey' => $apikey));
+		return reset($res);
+	}
+
+	/**
+	 * Enables all domains excluded from the outgoing proxy.
+	 */
+	public function enableAllProxyChainExcludedDomains($apikey='') {
+		$res = $this->zap->request($this->zap->base . 'core/action/enableAllProxyChainExcludedDomains/', array('apikey' => $apikey));
+		return reset($res);
+	}
+
+	/**
+	 * Disables all domains excluded from the outgoing proxy.
+	 */
+	public function disableAllProxyChainExcludedDomains($apikey='') {
+		$res = $this->zap->request($this->zap->base . 'core/action/disableAllProxyChainExcludedDomains/', array('apikey' => $apikey));
+		return reset($res);
+	}
+
+	/**
+	 * Sets the maximum number of alert instances to include in a report. A value of zero is treated as unlimited.
+	 */
+	public function setOptionMaximumAlertInstances($numberofinstances, $apikey='') {
+		$res = $this->zap->request($this->zap->base . 'core/action/setOptionMaximumAlertInstances/', array('numberOfInstances' => $numberofinstances, 'apikey' => $apikey));
+		return reset($res);
+	}
+
+	/**
+	 * Sets whether or not related alerts will be merged in any reports generated.
+	 */
+	public function setOptionMergeRelatedAlerts($enabled, $apikey='') {
+		$res = $this->zap->request($this->zap->base . 'core/action/setOptionMergeRelatedAlerts/', array('enabled' => $enabled, 'apikey' => $apikey));
+		return reset($res);
+	}
+
+	/**
+	 * Sets (or clears, if empty) the path to the file with alert overrides.
+	 */
+	public function setOptionAlertOverridesFilePath($filepath=NULL, $apikey='') {
+		$params = array('apikey' => $apikey);
+		if ($filepath !== NULL) {
+			$params['filePath'] = $filepath;
+		}
+		$res = $this->zap->request($this->zap->base . 'core/action/setOptionAlertOverridesFilePath/', $params);
+		return reset($res);
+	}
+
+	/**
+	 * Sets the user agent that ZAP should use when creating HTTP messages (for example, spider messages or CONNECT requests to outgoing proxy).
+	 */
 	public function setOptionDefaultUserAgent($string, $apikey='') {
 		$res = $this->zap->request($this->zap->base . 'core/action/setOptionDefaultUserAgent/', array('String' => $string, 'apikey' => $apikey));
 		return reset($res);
@@ -357,6 +584,9 @@ class Core {
 		return reset($res);
 	}
 
+	/**
+	 * Use actions [add|modify|remove]ProxyChainExcludedDomain instead.
+	 */
 	public function setOptionProxyChainSkipName($string, $apikey='') {
 		$res = $this->zap->request($this->zap->base . 'core/action/setOptionProxyChainSkipName/', array('String' => $string, 'apikey' => $apikey));
 		return reset($res);
@@ -364,6 +594,14 @@ class Core {
 
 	public function setOptionProxyChainUserName($string, $apikey='') {
 		$res = $this->zap->request($this->zap->base . 'core/action/setOptionProxyChainUserName/', array('String' => $string, 'apikey' => $apikey));
+		return reset($res);
+	}
+
+	/**
+	 * Sets the TTL (in seconds) of successful DNS queries (applies after ZAP restart).
+	 */
+	public function setOptionDnsTtlSuccessfulQueries($integer, $apikey='') {
+		$res = $this->zap->request($this->zap->base . 'core/action/setOptionDnsTtlSuccessfulQueries/', array('Integer' => $integer, 'apikey' => $apikey));
 		return reset($res);
 	}
 
@@ -406,6 +644,9 @@ class Core {
 		return $this->zap->requestother($this->zap->base_other . 'core/other/proxy.pac/', array('apikey' => $apikey));
 	}
 
+	/**
+	 * Gets the Root CA certificate of the Local Proxy.
+	 */
 	public function rootcert($apikey='') {
 		return $this->zap->requestother($this->zap->base_other . 'core/other/rootcert/', array('apikey' => $apikey));
 	}
@@ -415,28 +656,35 @@ class Core {
 	}
 
 	/**
-	 * Generates a report in XML format
+	 * Genereert een rapport in XML formaat
 	 */
 	public function xmlreport($apikey='') {
 		return $this->zap->requestother($this->zap->base_other . 'core/other/xmlreport/', array('apikey' => $apikey));
 	}
 
 	/**
-	 * Generates a report in HTML format
+	 * Genereert een rapport in HTML formaat
 	 */
 	public function htmlreport($apikey='') {
 		return $this->zap->requestother($this->zap->base_other . 'core/other/htmlreport/', array('apikey' => $apikey));
 	}
 
 	/**
-	 * Gets the message with the given ID in HAR format
+	 * Generates a report in Markdown format
+	 */
+	public function mdreport($apikey='') {
+		return $this->zap->requestother($this->zap->base_other . 'core/other/mdreport/', array('apikey' => $apikey));
+	}
+
+	/**
+	 * Verkrijgt het bericht met het gegeven ID in HAR formaat
 	 */
 	public function messageHar($id, $apikey='') {
 		return $this->zap->requestother($this->zap->base_other . 'core/other/messageHar/', array('id' => $id, 'apikey' => $apikey));
 	}
 
 	/**
-	 * Gets the HTTP messages sent through/by ZAP, in HAR format, optionally filtered by URL and paginated with 'start' position and 'count' of messages
+	 * Verkrijgt de HTTP berichten die zijn verzonden via/door ZAP, in HAR formaat, desgewenst gefilterd op URL en gepagineerd met ''start'' positie en ''count'' aantal berichten
 	 */
 	public function messagesHar($baseurl=NULL, $start=NULL, $count=NULL, $apikey='') {
 		$params = array('apikey' => $apikey);
@@ -453,7 +701,14 @@ class Core {
 	}
 
 	/**
-	 * Sends the first HAR request entry, optionally following redirections. Returns, in HAR format, the request sent and response received and followed redirections, if any.
+	 * Gets the HTTP messages with the given IDs, in HAR format.
+	 */
+	public function messagesHarById($ids, $apikey='') {
+		return $this->zap->requestother($this->zap->base_other . 'core/other/messagesHarById/', array('ids' => $ids, 'apikey' => $apikey));
+	}
+
+	/**
+	 * Verstuurt de eerste HAR request en volgt desgewenst redirects. Geeft de verzonden requests, ontvangen responses, en gevolgde redirect in HAR formaat terug, als ze er zijn.
 	 */
 	public function sendHarRequest($request, $followredirects=NULL, $apikey='') {
 		$params = array('request' => $request, 'apikey' => $apikey);

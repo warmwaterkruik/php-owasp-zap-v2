@@ -33,7 +33,7 @@ class Autoupdate {
 	}
 
 	/**
-	 * Returns the latest version number
+	 * Geeft het laatste versie nummer terug
 	 */
 	public function latestVersionNumber() {
 		$res = $this->zap->request($this->zap->base . 'autoupdate/view/latestVersionNumber/');
@@ -41,10 +41,42 @@ class Autoupdate {
 	}
 
 	/**
-	 * Returns 'true' if ZAP is on the latest version
+	 * Geeft ''true'' terug als de huidige versie van ZAP de nieuwste is
 	 */
 	public function isLatestVersion() {
 		$res = $this->zap->request($this->zap->base . 'autoupdate/view/isLatestVersion/');
+		return reset($res);
+	}
+
+	/**
+	 * Return a list of all of the installed add-ons
+	 */
+	public function installedAddons() {
+		$res = $this->zap->request($this->zap->base . 'autoupdate/view/installedAddons/');
+		return reset($res);
+	}
+
+	/**
+	 * Return a list of any add-ons that have been added to the Marketplace since the last check for updates
+	 */
+	public function newAddons() {
+		$res = $this->zap->request($this->zap->base . 'autoupdate/view/newAddons/');
+		return reset($res);
+	}
+
+	/**
+	 * Return a list of any add-ons that have been changed in the Marketplace since the last check for updates
+	 */
+	public function updatedAddons() {
+		$res = $this->zap->request($this->zap->base . 'autoupdate/view/updatedAddons/');
+		return reset($res);
+	}
+
+	/**
+	 * Return a list of all of the add-ons on the ZAP Marketplace (this information is read once and then cached)
+	 */
+	public function marketplaceAddons() {
+		$res = $this->zap->request($this->zap->base . 'autoupdate/view/marketplaceAddons/');
 		return reset($res);
 	}
 
@@ -114,10 +146,26 @@ class Autoupdate {
 	}
 
 	/**
-	 * Downloads the latest release, if any 
+	 * Download de laatste release, als die er is 
 	 */
 	public function downloadLatestRelease($apikey='') {
 		$res = $this->zap->request($this->zap->base . 'autoupdate/action/downloadLatestRelease/', array('apikey' => $apikey));
+		return reset($res);
+	}
+
+	/**
+	 * Installs or updates the specified add-on, returning when complete (ie not asynchronously)
+	 */
+	public function installAddon($id, $apikey='') {
+		$res = $this->zap->request($this->zap->base . 'autoupdate/action/installAddon/', array('id' => $id, 'apikey' => $apikey));
+		return reset($res);
+	}
+
+	/**
+	 * Uninstalls the specified add-on 
+	 */
+	public function uninstallAddon($id, $apikey='') {
+		$res = $this->zap->request($this->zap->base . 'autoupdate/action/uninstallAddon/', array('id' => $id, 'apikey' => $apikey));
 		return reset($res);
 	}
 

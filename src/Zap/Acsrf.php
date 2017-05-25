@@ -33,7 +33,7 @@ class Acsrf {
 	}
 
 	/**
-	 * Lists the names of all anti CSRF tokens
+	 * Toont de namen van alle anti CSRF tokens
 	 */
 	public function optionTokensNames() {
 		$res = $this->zap->request($this->zap->base . 'acsrf/view/optionTokensNames/');
@@ -41,7 +41,7 @@ class Acsrf {
 	}
 
 	/**
-	 * Adds an anti CSRF token with the given name, enabled by default
+	 * Voegt een anti CSRF token toe met de gegeven naam, standaard ingeschakeld
 	 */
 	public function addOptionToken($string, $apikey='') {
 		$res = $this->zap->request($this->zap->base . 'acsrf/action/addOptionToken/', array('String' => $string, 'apikey' => $apikey));
@@ -49,7 +49,7 @@ class Acsrf {
 	}
 
 	/**
-	 * Removes the anti CSRF token with the given name
+	 * Verwijderd de anti CSRF token met de gegeven naam
 	 */
 	public function removeOptionToken($string, $apikey='') {
 		$res = $this->zap->request($this->zap->base . 'acsrf/action/removeOptionToken/', array('String' => $string, 'apikey' => $apikey));
@@ -57,7 +57,7 @@ class Acsrf {
 	}
 
 	/**
-	 * Generate a form for testing lack of anti CSRF tokens - typically invoked via ZAP
+	 * Genereert een formulier om het gebrek aan anti CSRF tokens te testen - meestal aangeroepen via ZAP
 	 */
 	public function genForm($hrefid, $apikey='') {
 		return $this->zap->requestother($this->zap->base_other . 'acsrf/other/genForm/', array('hrefId' => $hrefid, 'apikey' => $apikey));

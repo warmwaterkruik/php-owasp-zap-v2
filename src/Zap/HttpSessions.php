@@ -33,7 +33,15 @@ class HttpSessions {
 	}
 
 	/**
-	 * Gets the sessions of the given site. Optionally returning just the session with the given name.
+	 * Gets all of the sites that have sessions.
+	 */
+	public function sites() {
+		$res = $this->zap->request($this->zap->base . 'httpSessions/view/sites/');
+		return reset($res);
+	}
+
+	/**
+	 * Geeft de sessies van de gegeven site. Geeft optioneel alleen de sessie met de gegeven naam.
 	 */
 	public function sessions($site, $session=NULL) {
 		$params = array('site' => $site);
@@ -45,7 +53,7 @@ class HttpSessions {
 	}
 
 	/**
-	 * Gets the name of the active session for the given site.
+	 * Geeft de naam van de actieve sessie voor de gegeven site.
 	 */
 	public function activeSession($site) {
 		$res = $this->zap->request($this->zap->base . 'httpSessions/view/activeSession/', array('site' => $site));
@@ -53,7 +61,7 @@ class HttpSessions {
 	}
 
 	/**
-	 * Gets the names of the session tokens for the given site.
+	 * Geeft de namen van de sessie tokens voor de gegeven site.
 	 */
 	public function sessionTokens($site) {
 		$res = $this->zap->request($this->zap->base . 'httpSessions/view/sessionTokens/', array('site' => $site));
@@ -61,7 +69,7 @@ class HttpSessions {
 	}
 
 	/**
-	 * Creates an empty session for the given site. Optionally with the given name.
+	 * Maakt een lege sessie aan voor de gegeven site. Optioneel met de gegeven naam.
 	 */
 	public function createEmptySession($site, $session=NULL, $apikey='') {
 		$params = array('site' => $site, 'apikey' => $apikey);
@@ -73,7 +81,7 @@ class HttpSessions {
 	}
 
 	/**
-	 * Removes the session from the given site.
+	 * Verwijdert de sessie voor de gegeven site.
 	 */
 	public function removeSession($site, $session, $apikey='') {
 		$res = $this->zap->request($this->zap->base . 'httpSessions/action/removeSession/', array('site' => $site, 'session' => $session, 'apikey' => $apikey));
@@ -81,7 +89,7 @@ class HttpSessions {
 	}
 
 	/**
-	 * Sets the given session as active for the given site.
+	 * Maakt de gegeven sessie actief voor de gegeven site.
 	 */
 	public function setActiveSession($site, $session, $apikey='') {
 		$res = $this->zap->request($this->zap->base . 'httpSessions/action/setActiveSession/', array('site' => $site, 'session' => $session, 'apikey' => $apikey));
@@ -89,7 +97,7 @@ class HttpSessions {
 	}
 
 	/**
-	 * Unsets the active session of the given site.
+	 * Maakt de actieve sessie voor de gegeven site inactief.
 	 */
 	public function unsetActiveSession($site, $apikey='') {
 		$res = $this->zap->request($this->zap->base . 'httpSessions/action/unsetActiveSession/', array('site' => $site, 'apikey' => $apikey));
@@ -97,7 +105,7 @@ class HttpSessions {
 	}
 
 	/**
-	 * Adds the session token to the given site.
+	 * Voegt een sessie token toe aan de gegeven site.
 	 */
 	public function addSessionToken($site, $sessiontoken, $apikey='') {
 		$res = $this->zap->request($this->zap->base . 'httpSessions/action/addSessionToken/', array('site' => $site, 'sessionToken' => $sessiontoken, 'apikey' => $apikey));
@@ -105,7 +113,7 @@ class HttpSessions {
 	}
 
 	/**
-	 * Removes the session token from the given site.
+	 * Verwijdert een sessie token voor de gegeven site.
 	 */
 	public function removeSessionToken($site, $sessiontoken, $apikey='') {
 		$res = $this->zap->request($this->zap->base . 'httpSessions/action/removeSessionToken/', array('site' => $site, 'sessionToken' => $sessiontoken, 'apikey' => $apikey));
@@ -113,7 +121,7 @@ class HttpSessions {
 	}
 
 	/**
-	 * Sets the value of the session token of the given session for the given site.
+	 * Stelt de waarde van de sessie token in voor de gegeven sessie en de gegeven site.
 	 */
 	public function setSessionTokenValue($site, $session, $sessiontoken, $tokenvalue, $apikey='') {
 		$res = $this->zap->request($this->zap->base . 'httpSessions/action/setSessionTokenValue/', array('site' => $site, 'session' => $session, 'sessionToken' => $sessiontoken, 'tokenValue' => $tokenvalue, 'apikey' => $apikey));
@@ -121,7 +129,7 @@ class HttpSessions {
 	}
 
 	/**
-	 * Renames the session of the given site.
+	 * Wijzigt de naam van de sessie voor de gegeven site.
 	 */
 	public function renameSession($site, $oldsessionname, $newsessionname, $apikey='') {
 		$res = $this->zap->request($this->zap->base . 'httpSessions/action/renameSession/', array('site' => $site, 'oldSessionName' => $oldsessionname, 'newSessionName' => $newsessionname, 'apikey' => $apikey));

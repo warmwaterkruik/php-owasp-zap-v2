@@ -33,7 +33,7 @@ class Params {
 	}
 
 	/**
-	 * Shows the parameters for the specified site, or for all sites if the site is not specified
+	 * Toon de parameters voor de gegeven site, of voor alle sites als er geen site is gespecificeerd
 	 */
 	public function params($site=NULL) {
 		$params = array();

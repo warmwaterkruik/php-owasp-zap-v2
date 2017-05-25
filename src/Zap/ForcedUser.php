@@ -33,7 +33,7 @@ class ForcedUser {
 	}
 
 	/**
-	 * Returns 'true' if 'forced user' mode is enabled, 'false' otherwise
+	 * Geeft ''true'' terug als ''forced user'' mode is ingeschakeld, anders ''false''
 	 */
 	public function isForcedUserModeEnabled() {
 		$res = $this->zap->request($this->zap->base . 'forcedUser/view/isForcedUserModeEnabled/');
@@ -41,7 +41,7 @@ class ForcedUser {
 	}
 
 	/**
-	 * Gets the user (ID) set as 'forced user' for the given context (ID)
+	 * Geeft de gebruiker (ID) die als ''geforceerde gebruiker'' is ingesteld voor de gegeven context (ID)
 	 */
 	public function getForcedUser($contextid) {
 		$res = $this->zap->request($this->zap->base . 'forcedUser/view/getForcedUser/', array('contextId' => $contextid));
@@ -49,7 +49,7 @@ class ForcedUser {
 	}
 
 	/**
-	 * Sets the user (ID) that should be used in 'forced user' mode for the given context (ID)
+	 * Zet de gebruiker (ID) als ''geforceerde gebruiker'' in de gegeven context (ID)
 	 */
 	public function setForcedUser($contextid, $userid, $apikey='') {
 		$res = $this->zap->request($this->zap->base . 'forcedUser/action/setForcedUser/', array('contextId' => $contextid, 'userId' => $userid, 'apikey' => $apikey));
@@ -57,7 +57,7 @@ class ForcedUser {
 	}
 
 	/**
-	 * Sets if 'forced user' mode should be enabled or not
+	 * Stelt in of ''geforceerde gebruiker'' modus moet worden ingeschakeld of niet
 	 */
 	public function setForcedUserModeEnabled($boolean, $apikey='') {
 		$res = $this->zap->request($this->zap->base . 'forcedUser/action/setForcedUserModeEnabled/', array('boolean' => $boolean, 'apikey' => $apikey));

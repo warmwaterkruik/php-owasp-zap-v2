@@ -33,7 +33,7 @@ class Script {
 	}
 
 	/**
-	 * Lists the script engines available
+	 * Toont de beschikbare script engines
 	 */
 	public function listEngines() {
 		$res = $this->zap->request($this->zap->base . 'script/view/listEngines/');
@@ -41,7 +41,7 @@ class Script {
 	}
 
 	/**
-	 * Lists the scripts available, with its engine, name, description, type and error state.
+	 * Toont de beschikbare scripts, met hun engine, naam, beschrijving, type en fout status.
 	 */
 	public function listScripts() {
 		$res = $this->zap->request($this->zap->base . 'script/view/listScripts/');
@@ -49,7 +49,7 @@ class Script {
 	}
 
 	/**
-	 * Enables the script with the given name
+	 * Schakelt het script met de gegeven naam in
 	 */
 	public function enable($scriptname, $apikey='') {
 		$res = $this->zap->request($this->zap->base . 'script/action/enable/', array('scriptName' => $scriptname, 'apikey' => $apikey));
@@ -57,7 +57,7 @@ class Script {
 	}
 
 	/**
-	 * Disables the script with the given name
+	 * Schakelt het script met de gegeven naam uit
 	 */
 	public function disable($scriptname, $apikey='') {
 		$res = $this->zap->request($this->zap->base . 'script/action/disable/', array('scriptName' => $scriptname, 'apikey' => $apikey));
@@ -65,19 +65,22 @@ class Script {
 	}
 
 	/**
-	 * Loads a script into ZAP from the given local file, with the given name, type and engine, optionally with a description
+	 * Laad een script in ZAP uit het gegeven lokale bestand, met de gegeven naam, type en engine, optioneel met een beschrijving
 	 */
-	public function load($scriptname, $scripttype, $scriptengine, $filename, $scriptdescription=NULL, $apikey='') {
+	public function load($scriptname, $scripttype, $scriptengine, $filename, $scriptdescription=NULL, $charset=NULL, $apikey='') {
 		$params = array('scriptName' => $scriptname, 'scriptType' => $scripttype, 'scriptEngine' => $scriptengine, 'fileName' => $filename, 'apikey' => $apikey);
 		if ($scriptdescription !== NULL) {
 			$params['scriptDescription'] = $scriptdescription;
+		}
+		if ($charset !== NULL) {
+			$params['charset'] = $charset;
 		}
 		$res = $this->zap->request($this->zap->base . 'script/action/load/', $params);
 		return reset($res);
 	}
 
 	/**
-	 * Removes the script with the given name
+	 * Verwijdert het script met de gegeven naam
 	 */
 	public function remove($scriptname, $apikey='') {
 		$res = $this->zap->request($this->zap->base . 'script/action/remove/', array('scriptName' => $scriptname, 'apikey' => $apikey));
@@ -85,7 +88,7 @@ class Script {
 	}
 
 	/**
-	 * Runs the stand alone script with the give name
+	 * Voert het stand alone script met de gegeven naam uit
 	 */
 	public function runStandAloneScript($scriptname, $apikey='') {
 		$res = $this->zap->request($this->zap->base . 'script/action/runStandAloneScript/', array('scriptName' => $scriptname, 'apikey' => $apikey));

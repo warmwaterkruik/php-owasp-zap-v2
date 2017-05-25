@@ -60,16 +60,41 @@ class Spider {
 		return reset($res);
 	}
 
+	/**
+	 * Gets the regexes of URLs excluded from the spider scans.
+	 */
 	public function excludedFromScan() {
 		$res = $this->zap->request($this->zap->base . 'spider/view/excludedFromScan/');
 		return reset($res);
 	}
 
+	/**
+	 * Returns a list of unique URLs from the history table based on HTTP messages added by the Spider.
+	 */
+	public function allUrls() {
+		$res = $this->zap->request($this->zap->base . 'spider/view/allUrls/');
+		return reset($res);
+	}
+
+	/**
+	 * Gets all the domains that are always in scope. For each domain the following are shown: the index, the value (domain), if enabled, and if specified as a regex.
+	 */
+	public function domainsAlwaysInScope() {
+		$res = $this->zap->request($this->zap->base . 'spider/view/domainsAlwaysInScope/');
+		return reset($res);
+	}
+
+	/**
+	 * Use view domainsAlwaysInScope instead.
+	 */
 	public function optionDomainsAlwaysInScope() {
 		$res = $this->zap->request($this->zap->base . 'spider/view/optionDomainsAlwaysInScope/');
 		return reset($res);
 	}
 
+	/**
+	 * Use view domainsAlwaysInScope instead.
+	 */
 	public function optionDomainsAlwaysInScopeEnabled() {
 		$res = $this->zap->request($this->zap->base . 'spider/view/optionDomainsAlwaysInScopeEnabled/');
 		return reset($res);
@@ -80,8 +105,29 @@ class Spider {
 		return reset($res);
 	}
 
+	/**
+	 * Gets the maximum number of child nodes (per node) that can be crawled, 0 means no limit.
+	 */
+	public function optionMaxChildren() {
+		$res = $this->zap->request($this->zap->base . 'spider/view/optionMaxChildren/');
+		return reset($res);
+	}
+
 	public function optionMaxDepth() {
 		$res = $this->zap->request($this->zap->base . 'spider/view/optionMaxDepth/');
+		return reset($res);
+	}
+
+	public function optionMaxDuration() {
+		$res = $this->zap->request($this->zap->base . 'spider/view/optionMaxDuration/');
+		return reset($res);
+	}
+
+	/**
+	 * Gets the maximum size, in bytes, that a response might have to be parsed.
+	 */
+	public function optionMaxParseSizeBytes() {
+		$res = $this->zap->request($this->zap->base . 'spider/view/optionMaxParseSizeBytes/');
 		return reset($res);
 	}
 
@@ -117,6 +163,14 @@ class Spider {
 
 	public function optionUserAgent() {
 		$res = $this->zap->request($this->zap->base . 'spider/view/optionUserAgent/');
+		return reset($res);
+	}
+
+	/**
+	 * Gets whether or not a spider process should accept cookies while spidering.
+	 */
+	public function optionAcceptCookies() {
+		$res = $this->zap->request($this->zap->base . 'spider/view/optionAcceptCookies/');
 		return reset($res);
 	}
 
@@ -161,7 +215,7 @@ class Spider {
 	}
 
 	/**
-	 * Sets whether or not the 'Referer' header should be sent while spidering
+	 * Stelt in of de ''Referer'' header tijdens het spideren moet worden verstuurd of niet
 	 */
 	public function optionSendRefererHeader() {
 		$res = $this->zap->request($this->zap->base . 'spider/view/optionSendRefererHeader/');
@@ -174,10 +228,13 @@ class Spider {
 	}
 
 	/**
-	 * Runs the spider against the given URL. Optionally, the 'maxChildren' parameter can be set to limit the number of children scanned, the 'recurse' parameter can be used to prevent the spider from seeding recursively and the parameter 'contextName' can be used to constrain the scan to a Context.
+	 * Voert de spider uit tegen de gegeven URL. Optioneel kan de ''maxChildren'' parameter worden ingesteld om het aantal te scannen kinderen te beperken. De ''recurse'' parameter kan worden ingesteld om te voorkomen dat de spider recursief te seeden.
 	 */
-	public function scan($url, $maxchildren=NULL, $recurse=NULL, $contextname=NULL, $apikey='') {
-		$params = array('url' => $url, 'apikey' => $apikey);
+	public function scan($url=NULL, $maxchildren=NULL, $recurse=NULL, $contextname=NULL, $subtreeonly=NULL, $apikey='') {
+		$params = array('apikey' => $apikey);
+		if ($url !== NULL) {
+			$params['url'] = $url;
+		}
 		if ($maxchildren !== NULL) {
 			$params['maxChildren'] = $maxchildren;
 		}
@@ -187,20 +244,29 @@ class Spider {
 		if ($contextname !== NULL) {
 			$params['contextName'] = $contextname;
 		}
+		if ($subtreeonly !== NULL) {
+			$params['subtreeOnly'] = $subtreeonly;
+		}
 		$res = $this->zap->request($this->zap->base . 'spider/action/scan/', $params);
 		return reset($res);
 	}
 
 	/**
-	 * Runs the spider from the perspective of a User, obtained using the given Context ID and User ID. See 'scan' action for more details.
+	 * Voert de spider uit vanuit het perspectief van een Gebruiker, verkregen m. b. v. de gegeven Context ID en Gebruiker ID. Zie ''scan'' acties voor meer informatie.
 	 */
-	public function scanAsUser($url, $contextid, $userid, $maxchildren=NULL, $recurse=NULL, $apikey='') {
-		$params = array('url' => $url, 'contextId' => $contextid, 'userId' => $userid, 'apikey' => $apikey);
+	public function scanAsUser($contextid, $userid, $url=NULL, $maxchildren=NULL, $recurse=NULL, $subtreeonly=NULL, $apikey='') {
+		$params = array('contextId' => $contextid, 'userId' => $userid, 'apikey' => $apikey);
+		if ($url !== NULL) {
+			$params['url'] = $url;
+		}
 		if ($maxchildren !== NULL) {
 			$params['maxChildren'] = $maxchildren;
 		}
 		if ($recurse !== NULL) {
 			$params['recurse'] = $recurse;
+		}
+		if ($subtreeonly !== NULL) {
+			$params['subtreeOnly'] = $subtreeonly;
 		}
 		$res = $this->zap->request($this->zap->base . 'spider/action/scanAsUser/', $params);
 		return reset($res);
@@ -250,13 +316,76 @@ class Spider {
 		return reset($res);
 	}
 
+	/**
+	 * Clears the regexes of URLs excluded from the spider scans.
+	 */
 	public function clearExcludedFromScan($apikey='') {
 		$res = $this->zap->request($this->zap->base . 'spider/action/clearExcludedFromScan/', array('apikey' => $apikey));
 		return reset($res);
 	}
 
+	/**
+	 * Adds a regex of URLs that should be excluded from the spider scans.
+	 */
 	public function excludeFromScan($regex, $apikey='') {
 		$res = $this->zap->request($this->zap->base . 'spider/action/excludeFromScan/', array('regex' => $regex, 'apikey' => $apikey));
+		return reset($res);
+	}
+
+	/**
+	 * Adds a new domain that''s always in scope, using the specified value. Optionally sets if the new entry is enabled (default, true) and whether or not the new value is specified as a regex (default, false).
+	 */
+	public function addDomainAlwaysInScope($value, $isregex=NULL, $isenabled=NULL, $apikey='') {
+		$params = array('value' => $value, 'apikey' => $apikey);
+		if ($isregex !== NULL) {
+			$params['isRegex'] = $isregex;
+		}
+		if ($isenabled !== NULL) {
+			$params['isEnabled'] = $isenabled;
+		}
+		$res = $this->zap->request($this->zap->base . 'spider/action/addDomainAlwaysInScope/', $params);
+		return reset($res);
+	}
+
+	/**
+	 * Modifies a domain that''s always in scope. Allows to modify the value, if enabled or if a regex. The domain is selected with its index, which can be obtained with the view domainsAlwaysInScope.
+	 */
+	public function modifyDomainAlwaysInScope($idx, $value=NULL, $isregex=NULL, $isenabled=NULL, $apikey='') {
+		$params = array('idx' => $idx, 'apikey' => $apikey);
+		if ($value !== NULL) {
+			$params['value'] = $value;
+		}
+		if ($isregex !== NULL) {
+			$params['isRegex'] = $isregex;
+		}
+		if ($isenabled !== NULL) {
+			$params['isEnabled'] = $isenabled;
+		}
+		$res = $this->zap->request($this->zap->base . 'spider/action/modifyDomainAlwaysInScope/', $params);
+		return reset($res);
+	}
+
+	/**
+	 * Removes a domain that''s always in scope, with the given index. The index can be obtained with the view domainsAlwaysInScope.
+	 */
+	public function removeDomainAlwaysInScope($idx, $apikey='') {
+		$res = $this->zap->request($this->zap->base . 'spider/action/removeDomainAlwaysInScope/', array('idx' => $idx, 'apikey' => $apikey));
+		return reset($res);
+	}
+
+	/**
+	 * Enables all domains that are always in scope.
+	 */
+	public function enableAllDomainsAlwaysInScope($apikey='') {
+		$res = $this->zap->request($this->zap->base . 'spider/action/enableAllDomainsAlwaysInScope/', array('apikey' => $apikey));
+		return reset($res);
+	}
+
+	/**
+	 * Disables all domains that are always in scope.
+	 */
+	public function disableAllDomainsAlwaysInScope($apikey='') {
+		$res = $this->zap->request($this->zap->base . 'spider/action/disableAllDomainsAlwaysInScope/', array('apikey' => $apikey));
 		return reset($res);
 	}
 
@@ -265,6 +394,9 @@ class Spider {
 		return reset($res);
 	}
 
+	/**
+	 * Use actions [add|modify|remove]DomainAlwaysInScope instead.
+	 */
 	public function setOptionScopeString($string, $apikey='') {
 		$res = $this->zap->request($this->zap->base . 'spider/action/setOptionScopeString/', array('String' => $string, 'apikey' => $apikey));
 		return reset($res);
@@ -280,13 +412,42 @@ class Spider {
 		return reset($res);
 	}
 
+	/**
+	 * Sets whether or not a spider process should accept cookies while spidering.
+	 */
+	public function setOptionAcceptCookies($boolean, $apikey='') {
+		$res = $this->zap->request($this->zap->base . 'spider/action/setOptionAcceptCookies/', array('Boolean' => $boolean, 'apikey' => $apikey));
+		return reset($res);
+	}
+
 	public function setOptionHandleODataParametersVisited($boolean, $apikey='') {
 		$res = $this->zap->request($this->zap->base . 'spider/action/setOptionHandleODataParametersVisited/', array('Boolean' => $boolean, 'apikey' => $apikey));
 		return reset($res);
 	}
 
+	/**
+	 * Sets the maximum number of child nodes (per node) that can be crawled, 0 means no limit.
+	 */
+	public function setOptionMaxChildren($integer, $apikey='') {
+		$res = $this->zap->request($this->zap->base . 'spider/action/setOptionMaxChildren/', array('Integer' => $integer, 'apikey' => $apikey));
+		return reset($res);
+	}
+
 	public function setOptionMaxDepth($integer, $apikey='') {
 		$res = $this->zap->request($this->zap->base . 'spider/action/setOptionMaxDepth/', array('Integer' => $integer, 'apikey' => $apikey));
+		return reset($res);
+	}
+
+	public function setOptionMaxDuration($integer, $apikey='') {
+		$res = $this->zap->request($this->zap->base . 'spider/action/setOptionMaxDuration/', array('Integer' => $integer, 'apikey' => $apikey));
+		return reset($res);
+	}
+
+	/**
+	 * Sets the maximum size, in bytes, that a response might have to be parsed. This allows the spider to skip big responses/files.
+	 */
+	public function setOptionMaxParseSizeBytes($integer, $apikey='') {
+		$res = $this->zap->request($this->zap->base . 'spider/action/setOptionMaxParseSizeBytes/', array('Integer' => $integer, 'apikey' => $apikey));
 		return reset($res);
 	}
 
@@ -335,6 +496,9 @@ class Spider {
 		return reset($res);
 	}
 
+	/**
+	 * Sets whether or not the ''Referer'' header should be sent while spidering.
+	 */
 	public function setOptionSendRefererHeader($boolean, $apikey='') {
 		$res = $this->zap->request($this->zap->base . 'spider/action/setOptionSendRefererHeader/', array('Boolean' => $boolean, 'apikey' => $apikey));
 		return reset($res);

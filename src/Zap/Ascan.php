@@ -70,6 +70,9 @@ class Ascan {
 		return reset($res);
 	}
 
+	/**
+	 * Gets the regexes of URLs excluded from the active scans.
+	 */
 	public function excludedFromScan() {
 		$res = $this->zap->request($this->zap->base . 'ascan/view/excludedFromScan/');
 		return reset($res);
@@ -104,6 +107,30 @@ class Ascan {
 		return reset($res);
 	}
 
+	/**
+	 * Gets all the parameters that are excluded. For each parameter the following are shown: the name, the URL, and the parameter type.
+	 */
+	public function excludedParams() {
+		$res = $this->zap->request($this->zap->base . 'ascan/view/excludedParams/');
+		return reset($res);
+	}
+
+	/**
+	 * Use view excludedParams instead.
+	 */
+	public function optionExcludedParamList() {
+		$res = $this->zap->request($this->zap->base . 'ascan/view/optionExcludedParamList/');
+		return reset($res);
+	}
+
+	/**
+	 * Gets all the types of excluded parameters. For each type the following are shown: the ID and the name.
+	 */
+	public function excludedParamTypes() {
+		$res = $this->zap->request($this->zap->base . 'ascan/view/excludedParamTypes/');
+		return reset($res);
+	}
+
 	public function optionAttackPolicy() {
 		$res = $this->zap->request($this->zap->base . 'ascan/view/optionAttackPolicy/');
 		return reset($res);
@@ -116,11 +143,6 @@ class Ascan {
 
 	public function optionDelayInMs() {
 		$res = $this->zap->request($this->zap->base . 'ascan/view/optionDelayInMs/');
-		return reset($res);
-	}
-
-	public function optionExcludedParamList() {
-		$res = $this->zap->request($this->zap->base . 'ascan/view/optionExcludedParamList/');
 		return reset($res);
 	}
 
@@ -141,6 +163,16 @@ class Ascan {
 
 	public function optionMaxResultsToList() {
 		$res = $this->zap->request($this->zap->base . 'ascan/view/optionMaxResultsToList/');
+		return reset($res);
+	}
+
+	public function optionMaxRuleDurationInMins() {
+		$res = $this->zap->request($this->zap->base . 'ascan/view/optionMaxRuleDurationInMins/');
+		return reset($res);
+	}
+
+	public function optionMaxScanDurationInMins() {
+		$res = $this->zap->request($this->zap->base . 'ascan/view/optionMaxScanDurationInMins/');
 		return reset($res);
 	}
 
@@ -169,6 +201,9 @@ class Ascan {
 		return reset($res);
 	}
 
+	/**
+	 * Tells whether or not the active scanner should inject the HTTP request header X-ZAP-Scan-ID, with the ID of the scanner that''s sending the requests.
+	 */
 	public function optionInjectPluginIdInHeader() {
 		$res = $this->zap->request($this->zap->base . 'ascan/view/optionInjectPluginIdInHeader/');
 		return reset($res);
@@ -189,13 +224,27 @@ class Ascan {
 		return reset($res);
 	}
 
+	/**
+	 * Tells whether or not the HTTP Headers of all requests should be scanned. Not just requests that send parameters, through the query or request body.
+	 */
+	public function optionScanHeadersAllRequests() {
+		$res = $this->zap->request($this->zap->base . 'ascan/view/optionScanHeadersAllRequests/');
+		return reset($res);
+	}
+
 	public function optionShowAdvancedDialog() {
 		$res = $this->zap->request($this->zap->base . 'ascan/view/optionShowAdvancedDialog/');
 		return reset($res);
 	}
 
-	public function scan($url, $recurse=NULL, $inscopeonly=NULL, $scanpolicyname=NULL, $method=NULL, $postdata=NULL, $apikey='') {
-		$params = array('url' => $url, 'apikey' => $apikey);
+	/**
+	 * Runs the active scanner against the given URL and/or Context. Optionally, the ''recurse'' parameter can be used to scan URLs under the given URL, the parameter ''inScopeOnly'' can be used to constrain the scan to URLs that are in scope (ignored if a Context is specified), the parameter ''scanPolicyName'' allows to specify the scan policy (if none is given it uses the default scan policy), the parameters ''method'' and ''postData'' allow to select a given request in conjunction with the given URL.
+	 */
+	public function scan($url=NULL, $recurse=NULL, $inscopeonly=NULL, $scanpolicyname=NULL, $method=NULL, $postdata=NULL, $contextid=NULL, $apikey='') {
+		$params = array('apikey' => $apikey);
+		if ($url !== NULL) {
+			$params['url'] = $url;
+		}
 		if ($recurse !== NULL) {
 			$params['recurse'] = $recurse;
 		}
@@ -211,15 +260,27 @@ class Ascan {
 		if ($postdata !== NULL) {
 			$params['postData'] = $postdata;
 		}
+		if ($contextid !== NULL) {
+			$params['contextId'] = $contextid;
+		}
 		$res = $this->zap->request($this->zap->base . 'ascan/action/scan/', $params);
 		return reset($res);
 	}
 
 	/**
-	 * Active Scans from the perspective of a User, obtained using the given Context ID and User ID. See 'scan' action for more details.
+	 * Active Scans vanuit het perspectief van een Gebruiker, verkregen met behulp van de gegeven Context ID en Gebruiker ID. Zie ''scan'' actie voor meer details.
 	 */
-	public function scanAsUser($url, $contextid, $userid, $recurse=NULL, $scanpolicyname=NULL, $method=NULL, $postdata=NULL, $apikey='') {
-		$params = array('url' => $url, 'contextId' => $contextid, 'userId' => $userid, 'apikey' => $apikey);
+	public function scanAsUser($url=NULL, $contextid=NULL, $userid=NULL, $recurse=NULL, $scanpolicyname=NULL, $method=NULL, $postdata=NULL, $apikey='') {
+		$params = array('apikey' => $apikey);
+		if ($url !== NULL) {
+			$params['url'] = $url;
+		}
+		if ($contextid !== NULL) {
+			$params['contextId'] = $contextid;
+		}
+		if ($userid !== NULL) {
+			$params['userId'] = $userid;
+		}
 		if ($recurse !== NULL) {
 			$params['recurse'] = $recurse;
 		}
@@ -276,11 +337,17 @@ class Ascan {
 		return reset($res);
 	}
 
+	/**
+	 * Clears the regexes of URLs excluded from the active scans.
+	 */
 	public function clearExcludedFromScan($apikey='') {
 		$res = $this->zap->request($this->zap->base . 'ascan/action/clearExcludedFromScan/', array('apikey' => $apikey));
 		return reset($res);
 	}
 
+	/**
+	 * Adds a regex of URLs that should be excluded from the active scans.
+	 */
 	public function excludeFromScan($regex, $apikey='') {
 		$res = $this->zap->request($this->zap->base . 'ascan/action/excludeFromScan/', array('regex' => $regex, 'apikey' => $apikey));
 		return reset($res);
@@ -304,18 +371,30 @@ class Ascan {
 		return reset($res);
 	}
 
-	public function enableScanners($ids, $apikey='') {
-		$res = $this->zap->request($this->zap->base . 'ascan/action/enableScanners/', array('ids' => $ids, 'apikey' => $apikey));
+	public function enableScanners($ids, $scanpolicyname=NULL, $apikey='') {
+		$params = array('ids' => $ids, 'apikey' => $apikey);
+		if ($scanpolicyname !== NULL) {
+			$params['scanPolicyName'] = $scanpolicyname;
+		}
+		$res = $this->zap->request($this->zap->base . 'ascan/action/enableScanners/', $params);
 		return reset($res);
 	}
 
-	public function disableScanners($ids, $apikey='') {
-		$res = $this->zap->request($this->zap->base . 'ascan/action/disableScanners/', array('ids' => $ids, 'apikey' => $apikey));
+	public function disableScanners($ids, $scanpolicyname=NULL, $apikey='') {
+		$params = array('ids' => $ids, 'apikey' => $apikey);
+		if ($scanpolicyname !== NULL) {
+			$params['scanPolicyName'] = $scanpolicyname;
+		}
+		$res = $this->zap->request($this->zap->base . 'ascan/action/disableScanners/', $params);
 		return reset($res);
 	}
 
-	public function setEnabledPolicies($ids, $apikey='') {
-		$res = $this->zap->request($this->zap->base . 'ascan/action/setEnabledPolicies/', array('ids' => $ids, 'apikey' => $apikey));
+	public function setEnabledPolicies($ids, $scanpolicyname=NULL, $apikey='') {
+		$params = array('ids' => $ids, 'apikey' => $apikey);
+		if ($scanpolicyname !== NULL) {
+			$params['scanPolicyName'] = $scanpolicyname;
+		}
+		$res = $this->zap->request($this->zap->base . 'ascan/action/setEnabledPolicies/', $params);
 		return reset($res);
 	}
 
@@ -355,13 +434,73 @@ class Ascan {
 		return reset($res);
 	}
 
-	public function addScanPolicy($scanpolicyname, $apikey='') {
-		$res = $this->zap->request($this->zap->base . 'ascan/action/addScanPolicy/', array('scanPolicyName' => $scanpolicyname, 'apikey' => $apikey));
+	public function addScanPolicy($scanpolicyname, $alertthreshold=NULL, $attackstrength=NULL, $apikey='') {
+		$params = array('scanPolicyName' => $scanpolicyname, 'apikey' => $apikey);
+		if ($alertthreshold !== NULL) {
+			$params['alertThreshold'] = $alertthreshold;
+		}
+		if ($attackstrength !== NULL) {
+			$params['attackStrength'] = $attackstrength;
+		}
+		$res = $this->zap->request($this->zap->base . 'ascan/action/addScanPolicy/', $params);
 		return reset($res);
 	}
 
 	public function removeScanPolicy($scanpolicyname, $apikey='') {
 		$res = $this->zap->request($this->zap->base . 'ascan/action/removeScanPolicy/', array('scanPolicyName' => $scanpolicyname, 'apikey' => $apikey));
+		return reset($res);
+	}
+
+	public function updateScanPolicy($scanpolicyname, $alertthreshold=NULL, $attackstrength=NULL, $apikey='') {
+		$params = array('scanPolicyName' => $scanpolicyname, 'apikey' => $apikey);
+		if ($alertthreshold !== NULL) {
+			$params['alertThreshold'] = $alertthreshold;
+		}
+		if ($attackstrength !== NULL) {
+			$params['attackStrength'] = $attackstrength;
+		}
+		$res = $this->zap->request($this->zap->base . 'ascan/action/updateScanPolicy/', $params);
+		return reset($res);
+	}
+
+	/**
+	 * Adds a new parameter excluded from the scan, using the specified name. Optionally sets if the new entry applies to a specific URL (default, all URLs) and sets the ID of the type of the parameter (default, ID of any type). The type IDs can be obtained with the view excludedParamTypes. 
+	 */
+	public function addExcludedParam($name, $type=NULL, $url=NULL, $apikey='') {
+		$params = array('name' => $name, 'apikey' => $apikey);
+		if ($type !== NULL) {
+			$params['type'] = $type;
+		}
+		if ($url !== NULL) {
+			$params['url'] = $url;
+		}
+		$res = $this->zap->request($this->zap->base . 'ascan/action/addExcludedParam/', $params);
+		return reset($res);
+	}
+
+	/**
+	 * Modifies a parameter excluded from the scan. Allows to modify the name, the URL and the type of parameter. The parameter is selected with its index, which can be obtained with the view excludedParams.
+	 */
+	public function modifyExcludedParam($idx, $name=NULL, $type=NULL, $url=NULL, $apikey='') {
+		$params = array('idx' => $idx, 'apikey' => $apikey);
+		if ($name !== NULL) {
+			$params['name'] = $name;
+		}
+		if ($type !== NULL) {
+			$params['type'] = $type;
+		}
+		if ($url !== NULL) {
+			$params['url'] = $url;
+		}
+		$res = $this->zap->request($this->zap->base . 'ascan/action/modifyExcludedParam/', $params);
+		return reset($res);
+	}
+
+	/**
+	 * Removes a parameter excluded from the scan, with the given index. The index can be obtained with the view excludedParams.
+	 */
+	public function removeExcludedParam($idx, $apikey='') {
+		$res = $this->zap->request($this->zap->base . 'ascan/action/removeExcludedParam/', array('idx' => $idx, 'apikey' => $apikey));
 		return reset($res);
 	}
 
@@ -395,6 +534,9 @@ class Ascan {
 		return reset($res);
 	}
 
+	/**
+	 * Sets whether or not the active scanner should inject the HTTP request header X-ZAP-Scan-ID, with the ID of the scanner that''s sending the requests.
+	 */
 	public function setOptionInjectPluginIdInHeader($boolean, $apikey='') {
 		$res = $this->zap->request($this->zap->base . 'ascan/action/setOptionInjectPluginIdInHeader/', array('Boolean' => $boolean, 'apikey' => $apikey));
 		return reset($res);
@@ -407,6 +549,16 @@ class Ascan {
 
 	public function setOptionMaxResultsToList($integer, $apikey='') {
 		$res = $this->zap->request($this->zap->base . 'ascan/action/setOptionMaxResultsToList/', array('Integer' => $integer, 'apikey' => $apikey));
+		return reset($res);
+	}
+
+	public function setOptionMaxRuleDurationInMins($integer, $apikey='') {
+		$res = $this->zap->request($this->zap->base . 'ascan/action/setOptionMaxRuleDurationInMins/', array('Integer' => $integer, 'apikey' => $apikey));
+		return reset($res);
+	}
+
+	public function setOptionMaxScanDurationInMins($integer, $apikey='') {
+		$res = $this->zap->request($this->zap->base . 'ascan/action/setOptionMaxScanDurationInMins/', array('Integer' => $integer, 'apikey' => $apikey));
 		return reset($res);
 	}
 
@@ -427,6 +579,14 @@ class Ascan {
 
 	public function setOptionRescanInAttackMode($boolean, $apikey='') {
 		$res = $this->zap->request($this->zap->base . 'ascan/action/setOptionRescanInAttackMode/', array('Boolean' => $boolean, 'apikey' => $apikey));
+		return reset($res);
+	}
+
+	/**
+	 * Sets whether or not the HTTP Headers of all requests should be scanned. Not just requests that send parameters, through the query or request body.
+	 */
+	public function setOptionScanHeadersAllRequests($boolean, $apikey='') {
+		$res = $this->zap->request($this->zap->base . 'ascan/action/setOptionScanHeadersAllRequests/', array('Boolean' => $boolean, 'apikey' => $apikey));
 		return reset($res);
 	}
 

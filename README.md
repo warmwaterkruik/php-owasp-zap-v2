@@ -1,11 +1,13 @@
 php-owasp-zap-v2
 ================
 
-PHP client API for OWASP ZAP 2.4
+PHP client API for OWASP ZAP
 
-All API class files (except Zapv2.php) are generated automatically using the ZAProxy API generator.
+All API class files (except Zapv2.php) are generated automatically using `PhpAPIGenerator.java` offered by [yukisov/php-api-generator-for-owasp-zap](https://github.com/yukisov/php-api-generator-for-owasp-zap).
 
-##Getting Started
+I uploaded this API to [Packagist](https://packagist.org/packages/warmwaterkruik/php-owasp-zap-v2).
+
+## Getting Started
 
 1. Add following lines to `composer.json` in your PHP project.
 
@@ -14,7 +16,7 @@ All API class files (except Zapv2.php) are generated automatically using the ZAP
     ...
     "require": {
       ...
-      "zaproxy/php-owasp-zap-v2": "2.4.*@beta",
+      "warmwaterkruik/php-owasp-zap-v2": ">2.6",
       ...
     }
     ...
@@ -23,7 +25,7 @@ All API class files (except Zapv2.php) are generated automatically using the ZAP
 
 2. `$ php composer.phar install/update`
 
-##Usage
+## Usage
 Example:
 
 ```php
@@ -31,12 +33,12 @@ Example:
 
 require "vendor/autoload.php";
 
-$api_key = "YOUR_API_KEY";
 $target = "http://target.example.com/";
+// Since zap 2.6 api key is required.
+$api_key = 'YOUR_API_KEY';
+$zap = new Zap\Zapv2('tcp://localhost:6667', $api_key);
 
-$zap = new Zap\Zapv2('tcp://localhost:8090');
-
-$version = @$zap->core->version();
+$version = $zap->core->version();
 if (is_null($version)) {
   echo "PHP API error\n";
   exit();
@@ -45,34 +47,33 @@ if (is_null($version)) {
 }
 
 echo "Spidering target ${target}\n";
-
-// Response JSON looks like {"scan":"1"}
-$scan_id = $zap->spider->scan($target, null, null, null, $api_key);
-$count = 0;
-while (true) {
-  if ($count > 10) exit();
-  // Response JSON looks like {"status":"50"}
-  $progress = intval($zap->spider->status($scan_id));
-  printf("Spider progress %d\n", $progress);
-  if ($progress >= 100) break;
+// Give the Spider a chance to start
+$resObj = $zap->spider->scan($target);
+if (property_exists($resObj, 'code')) {
+    echo "Error:\n";
+    echo "  code = {$resObj->code}\n";
+    echo "  message = {$resObj->message}\n";
+    exit();
+}
+while ((int)($zap->spider->status()) < 100) {
+  echo "Spider progress {$zap->spider->status()}%\n";
   sleep(2);
-  $count++;
 }
 echo "Spider completed\n";
 // Give the passive scanner a chance to finish
 sleep(5);
 
 echo "Scanning target ${target}\n";
-// Response JSON for error looks like {"code":"url_not_found", "message":"URL is not found"}
-$scan_id = $zap->ascan->scan($target, null, null, null, null, null, $api_key);
-$count = 0;
-while (true) {
-  if ($count > 10) exit();
-  $progress = intval($zap->ascan->status($scan_id));
-  printf("Scan progress %d\n", $progress);
-  if ($progress >= 100) break;
+$resObj = $zap->ascan->scan($target, 0, 0);
+if (property_exists($resObj, 'code')) {
+    echo "Error:\n";
+    echo "  code = {$resObj->code}\n";
+    echo "  message = {$resObj->message}\n";
+    exit();
+}
+while ((int)($zap->ascan->status()) < 100) {
+  echo "Scan progress {$zap->ascan->status()}%\n";
   sleep(2);
-  $count++;
 }
 echo "Scan completed\n";
 
@@ -85,8 +86,8 @@ print_r($alerts);
 ```
 
 ## API
-OWASP ZAP Wiki: [ApiGen_Index · zaproxy/zaproxy Wiki](https://github.com/zaproxy/zaproxy/wiki/ApiGen_Index)
+OWASP ZAP Wiki: [ApiGen_Index - zaproxy](https://github.com/zaproxy/zaproxy/wiki/ApiGen_Index)
 
 
-##License
+## License
 - Apache License, Version 2.0

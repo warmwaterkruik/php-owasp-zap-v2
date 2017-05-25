@@ -32,16 +32,97 @@ class Brk {
 		$this->zap = $zap;
 	}
 
-	public function brk($type, $scope, $state, $apikey='') {
-		$res = $this->zap->request($this->zap->base . 'break/action/break/', array('type' => $type, 'scope' => $scope, 'state' => $state, 'apikey' => $apikey));
+	/**
+	 * Returns True if ZAP will break on both requests and responses
+	 */
+	public function isBreakAll() {
+		$res = $this->zap->request($this->zap->base . 'break/view/isBreakAll/');
 		return reset($res);
 	}
 
+	/**
+	 * Returns True if ZAP will break on requests
+	 */
+	public function isBreakRequest() {
+		$res = $this->zap->request($this->zap->base . 'break/view/isBreakRequest/');
+		return reset($res);
+	}
+
+	/**
+	 * Returns True if ZAP will break on responses
+	 */
+	public function isBreakResponse() {
+		$res = $this->zap->request($this->zap->base . 'break/view/isBreakResponse/');
+		return reset($res);
+	}
+
+	/**
+	 * Returns the HTTP message currently intercepted (if any)
+	 */
+	public function httpMessage() {
+		$res = $this->zap->request($this->zap->base . 'break/view/httpMessage/');
+		return reset($res);
+	}
+
+	/**
+	 * Controls the global break functionality. The type may be one of: http-all, http-request or http-response. The state may be true (for turning break on for the specified type) or false (for turning break off). Scope is not currently used.
+	 */
+	public function brk($type, $state, $scope=NULL, $apikey='') {
+		$params = array('type' => $type, 'state' => $state, 'apikey' => $apikey);
+		if ($scope !== NULL) {
+			$params['scope'] = $scope;
+		}
+		$res = $this->zap->request($this->zap->base . 'break/action/break/', $params);
+		return reset($res);
+	}
+
+	/**
+	 * Overwrites the currently intercepted message with the data provided
+	 */
+	public function setHttpMessage($httpheader, $httpbody=NULL, $apikey='') {
+		$params = array('httpHeader' => $httpheader, 'apikey' => $apikey);
+		if ($httpbody !== NULL) {
+			$params['httpBody'] = $httpbody;
+		}
+		$res = $this->zap->request($this->zap->base . 'break/action/setHttpMessage/', $params);
+		return reset($res);
+	}
+
+	/**
+	 * Submits the currently intercepted message and unsets the global request/response break points
+	 */
+	public function continue($apikey='') {
+		$res = $this->zap->request($this->zap->base . 'break/action/continue/', array('apikey' => $apikey));
+		return reset($res);
+	}
+
+	/**
+	 * Submits the currently intercepted message, the next request or response will automatically be intercepted
+	 */
+	public function step($apikey='') {
+		$res = $this->zap->request($this->zap->base . 'break/action/step/', array('apikey' => $apikey));
+		return reset($res);
+	}
+
+	/**
+	 * Drops the currently intercepted message
+	 */
+	public function drop($apikey='') {
+		$res = $this->zap->request($this->zap->base . 'break/action/drop/', array('apikey' => $apikey));
+		return reset($res);
+	}
+
+	/**
+	 * Adds a custom HTTP breakpont. The string is the string to match. Location may be one of: url, request_header, request_body, response_header or response_body. Match may be: contains or regex. Inverse (match) may be true or false. Lastly, ignorecase (when matching the string) may be true or false.  
+	 */
 	public function addHttpBreakpoint($string, $location, $match, $inverse, $ignorecase, $apikey='') {
 		$res = $this->zap->request($this->zap->base . 'break/action/addHttpBreakpoint/', array('string' => $string, 'location' => $location, 'match' => $match, 'inverse' => $inverse, 'ignorecase' => $ignorecase, 'apikey' => $apikey));
 		return reset($res);
 	}
 
+	/**
+	 * Removes the specified break point
+	 */
 	public function removeHttpBreakpoint($string, $location, $match, $inverse, $ignorecase, $apikey='') {
 		$res = $this->zap->request($this->zap->base . 'break/action/removeHttpBreakpoint/', array('string' => $string, 'location' => $location, 'match' => $match, 'inverse' => $inverse, 'ignorecase' => $ignorecase, 'apikey' => $apikey));
 		return reset($res);

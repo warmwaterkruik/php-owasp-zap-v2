@@ -33,7 +33,7 @@ class Context {
 	}
 
 	/**
-	 * List context names of current session
+	 * Toon context namen van de huidige sessie
 	 */
 	public function contextList() {
 		$res = $this->zap->request($this->zap->base . 'context/view/contextList/');
@@ -41,7 +41,7 @@ class Context {
 	}
 
 	/**
-	 * List excluded regexs for context
+	 * Toon uitgesloten regexs voor context
 	 */
 	public function excludeRegexs($contextname) {
 		$res = $this->zap->request($this->zap->base . 'context/view/excludeRegexs/', array('contextName' => $contextname));
@@ -49,7 +49,7 @@ class Context {
 	}
 
 	/**
-	 * List included regexs for context
+	 * Toon opgenomen regexs voor context
 	 */
 	public function includeRegexs($contextname) {
 		$res = $this->zap->request($this->zap->base . 'context/view/includeRegexs/', array('contextName' => $contextname));
@@ -57,7 +57,7 @@ class Context {
 	}
 
 	/**
-	 * List the information about the named context
+	 * Toon de informatie over de genoemde context
 	 */
 	public function context($contextname) {
 		$res = $this->zap->request($this->zap->base . 'context/view/context/', array('contextName' => $contextname));
@@ -65,7 +65,7 @@ class Context {
 	}
 
 	/**
-	 * Lists the names of all built in technologies
+	 * Geeft een lijst met de namen van alle ingebouwde technologieen
 	 */
 	public function technologyList() {
 		$res = $this->zap->request($this->zap->base . 'context/view/technologyList/');
@@ -73,7 +73,7 @@ class Context {
 	}
 
 	/**
-	 * Lists the names of all technologies included in a context
+	 * Geeft de namen van alle technologieën die zijn ingeschakeld voor een context
 	 */
 	public function includedTechnologyList($contextname) {
 		$res = $this->zap->request($this->zap->base . 'context/view/includedTechnologyList/', array('contextName' => $contextname));
@@ -81,7 +81,7 @@ class Context {
 	}
 
 	/**
-	 * Lists the names of all technologies excluded from a context
+	 * Geeft de namen van alle technologieën die zijn uitgeschakeld in een context
 	 */
 	public function excludedTechnologyList($contextname) {
 		$res = $this->zap->request($this->zap->base . 'context/view/excludedTechnologyList/', array('contextName' => $contextname));
@@ -89,7 +89,7 @@ class Context {
 	}
 
 	/**
-	 * Add exclude regex to context
+	 * Voeg uitgesloten regex toe aan context
 	 */
 	public function excludeFromContext($contextname, $regex, $apikey='') {
 		$res = $this->zap->request($this->zap->base . 'context/action/excludeFromContext/', array('contextName' => $contextname, 'regex' => $regex, 'apikey' => $apikey));
@@ -97,7 +97,7 @@ class Context {
 	}
 
 	/**
-	 * Add include regex to context
+	 * Voeg opgenomen regex toe aan context
 	 */
 	public function includeInContext($contextname, $regex, $apikey='') {
 		$res = $this->zap->request($this->zap->base . 'context/action/includeInContext/', array('contextName' => $contextname, 'regex' => $regex, 'apikey' => $apikey));
@@ -105,7 +105,7 @@ class Context {
 	}
 
 	/**
-	 * Creates a new context with the given name in the current session
+	 * Maakt een nieuwe context aan in de huidige sessie
 	 */
 	public function newContext($contextname, $apikey='') {
 		$res = $this->zap->request($this->zap->base . 'context/action/newContext/', array('contextName' => $contextname, 'apikey' => $apikey));
@@ -113,7 +113,7 @@ class Context {
 	}
 
 	/**
-	 * Removes a context in the current session
+	 * Verwijder een context uit de huidige sessie
 	 */
 	public function removeContext($contextname, $apikey='') {
 		$res = $this->zap->request($this->zap->base . 'context/action/removeContext/', array('contextName' => $contextname, 'apikey' => $apikey));
@@ -121,7 +121,7 @@ class Context {
 	}
 
 	/**
-	 * Exports the context with the given name to a file. If a relative file path is specified it will be resolved against the "contexts" directory in ZAP "home" dir.
+	 * Exporteert de context met de gegeven naam naar een bestand. Als een relatief bestandspad wordt opgegeven, begint het bij de "contexts" map in de ZAP "home" map.
 	 */
 	public function exportContext($contextname, $contextfile, $apikey='') {
 		$res = $this->zap->request($this->zap->base . 'context/action/exportContext/', array('contextName' => $contextname, 'contextFile' => $contextfile, 'apikey' => $apikey));
@@ -129,7 +129,7 @@ class Context {
 	}
 
 	/**
-	 * Imports a context from a file. If a relative file path is specified it will be resolved against the "contexts" directory in ZAP "home" dir.
+	 * Importeert een context uit een bestand. Als een relatief pad wordt opgegeven, dan begint deze bij de "contexts" map in de ZAP "home" map.
 	 */
 	public function importContext($contextfile, $apikey='') {
 		$res = $this->zap->request($this->zap->base . 'context/action/importContext/', array('contextFile' => $contextfile, 'apikey' => $apikey));
@@ -137,7 +137,7 @@ class Context {
 	}
 
 	/**
-	 * Includes technologies with the given names, separated by a comma, to a context
+	 * Schakelt technologieën met de gegeven namen in in een context. De namen moeten worden gescheiden door een komma
 	 */
 	public function includeContextTechnologies($contextname, $technologynames, $apikey='') {
 		$res = $this->zap->request($this->zap->base . 'context/action/includeContextTechnologies/', array('contextName' => $contextname, 'technologyNames' => $technologynames, 'apikey' => $apikey));
@@ -145,7 +145,7 @@ class Context {
 	}
 
 	/**
-	 * Includes all built in technologies in to a context
+	 * Schakelt alle ingebouwde technologieën in in een context
 	 */
 	public function includeAllContextTechnologies($contextname, $apikey='') {
 		$res = $this->zap->request($this->zap->base . 'context/action/includeAllContextTechnologies/', array('contextName' => $contextname, 'apikey' => $apikey));
@@ -153,7 +153,7 @@ class Context {
 	}
 
 	/**
-	 * Excludes technologies with the given names, separated by a comma, from a context
+	 * Schakelt technologieën met de gegeven namen uit in een context. De namen moeten worden gescheiden door een komma
 	 */
 	public function excludeContextTechnologies($contextname, $technologynames, $apikey='') {
 		$res = $this->zap->request($this->zap->base . 'context/action/excludeContextTechnologies/', array('contextName' => $contextname, 'technologyNames' => $technologynames, 'apikey' => $apikey));
@@ -161,7 +161,7 @@ class Context {
 	}
 
 	/**
-	 * Excludes all built in technologies from a context
+	 * Schakelt alle ingebouwde technologieën uit in een context
 	 */
 	public function excludeAllContextTechnologies($contextname, $apikey='') {
 		$res = $this->zap->request($this->zap->base . 'context/action/excludeAllContextTechnologies/', array('contextName' => $contextname, 'apikey' => $apikey));
@@ -169,7 +169,7 @@ class Context {
 	}
 
 	/**
-	 * Sets a context to in scope (contexts are in scope by default)
+	 * Zet een context in scope (contexts zijn standaard in scope)
 	 */
 	public function setContextInScope($contextname, $booleaninscope, $apikey='') {
 		$res = $this->zap->request($this->zap->base . 'context/action/setContextInScope/', array('contextName' => $contextname, 'booleanInScope' => $booleaninscope, 'apikey' => $apikey));
