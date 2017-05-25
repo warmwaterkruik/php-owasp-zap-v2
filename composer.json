@@ -1,12 +1,17 @@
 {
-    "name": "zaproxy/php-owasp-zap-v2",
-    "description": "PHP client API for OWASP ZAP",
+    "name": "warmwaterkruik/php-owasp-zap-v2",
+    "description": "PHP client API for OWASP ZAP 2.6",
     "keywords": ["ZAP"],
     "license": "Apache-2.0",
     "authors": [
         {
             "name": "ZAP development team",
             "email": "yukisov@gmail.com",
+            "homepage": "https://www.owasp.org/index.php/OWASP_Zed_Attack_Proxy_Project"
+        },
+        {
+            "name": "ZAP development team",
+            "email": "daniel@netbuffer.com",
             "homepage": "https://www.owasp.org/index.php/OWASP_Zed_Attack_Proxy_Project"
         }
     ],
